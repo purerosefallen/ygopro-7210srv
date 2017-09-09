@@ -55,12 +55,12 @@ build:
     parallel: true
 
 after_build:
-  - ps: move bin\release\ygopro.exe .
+  - ps: move bin\release\ygopro_20ex.exe .
 
 test: off
 
 artifacts:
-  - path: ygopro.exe
+  - path: ygopro_20ex.exe
     name: ygopro temp build
 
 cache:
