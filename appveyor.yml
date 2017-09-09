@@ -55,7 +55,7 @@ build:
     parallel: true
 
 after_build:
-  - ps: move bin\release\ygopro_20ex.exe .
+  - ps: move bin\release\ygopro.exe ygopro_20ex.exe
 
 test: off
 
