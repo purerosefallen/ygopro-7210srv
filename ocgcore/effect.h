@@ -90,6 +90,7 @@ public:
 	void get_value(effect* peffect, uint32 extraargs, std::vector<int32>* result);
 	int32 check_value_condition(uint32 extraargs = 0);
 	int32 get_speed();
+	effect* clone();
 	card* get_owner() const;
 	uint8 get_owner_player();
 	card* get_handler() const;
@@ -107,7 +108,7 @@ public:
 
 //status
 #define EFFECT_STATUS_AVAILABLE	0x0001
-#define EFFECT_STATUS_ACTIVATED	0x0002
+//#define EFFECT_STATUS_ACTIVATED	0x0002
 
 #define EFFECT_COUNT_CODE_OATH 0x10000000
 #define EFFECT_COUNT_CODE_DUEL 0x20000000
@@ -149,6 +150,7 @@ public:
 #define EFFECT_TYPE_QUICK_F			0x0400	//
 #define EFFECT_TYPE_CONTINUOUS		0x0800	//
 #define EFFECT_TYPE_XMATERIAL		0x1000	//
+#define EFFECT_TYPE_GRANT			0x2000	//
 
 //========== Flags ==========
 enum effect_flag : uint32 {
@@ -247,7 +249,7 @@ inline effect_flag operator|(effect_flag flag1, effect_flag flag2)
 #define EFFECT_CANNOT_DISCARD_DECK		56	//
 #define EFFECT_CANNOT_USE_AS_COST		57	//
 #define EFFECT_CANNOT_PLACE_COUNTER		58	//
-
+#define EFFECT_CANNOT_TO_GRAVE_AS_COST	59	//
 #define EFFECT_LEAVE_FIELD_REDIRECT		60	//
 #define EFFECT_TO_HAND_REDIRECT			61	//
 #define EFFECT_TO_DECK_REDIRECT			62	//

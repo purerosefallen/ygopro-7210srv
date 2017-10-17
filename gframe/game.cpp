@@ -14,7 +14,7 @@
 #include <dirent.h>
 #endif
 
-const unsigned short PRO_VERSION = 0x133F;
+const unsigned short PRO_VERSION = 0x1340;
 
 namespace ygo {
 
@@ -734,6 +734,11 @@ void Game::MainLoop() {
 			if(dInfo.time_player == 0 || dInfo.time_player == 1)
 				if(dInfo.time_left[dInfo.time_player])
 					dInfo.time_left[dInfo.time_player]--;
+		}
+		//modded
+		if (DuelClient::try_needed) {
+			DuelClient::try_needed = false;
+			DuelClient::StartClient(DuelClient::temp_ip, DuelClient::temp_port, false);
 		}
 	}
 	DuelClient::StopClient(true);

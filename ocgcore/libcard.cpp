@@ -308,7 +308,14 @@ int32 scriptlib::card_get_linked_zone(lua_State *L) {
 	check_param_count(L, 1);
 	check_param(L, PARAM_TYPE_CARD, 1);
 	card* pcard = *(card**) lua_touserdata(L, 1);
-	lua_pushinteger(L, pcard->get_linked_zone());
+	uint32 zone = pcard->get_linked_zone();
+	int32 cp = pcard->current.controler;
+	if(lua_gettop(L) >= 2 && !lua_isnil(L, 2))
+		cp = lua_tointeger(L, 2);
+	if(cp == 1 - pcard->current.controler)
+		lua_pushinteger(L, (((zone & 0xffff) << 16) | (zone >> 16)));
+	else
+		lua_pushinteger(L, zone);
 	return 1;
 }
 int32 scriptlib::card_get_mutual_linked_group(lua_State *L) {
@@ -334,7 +341,14 @@ int32 scriptlib::card_get_mutual_linked_zone(lua_State *L) {
 	check_param_count(L, 1);
 	check_param(L, PARAM_TYPE_CARD, 1);
 	card* pcard = *(card**)lua_touserdata(L, 1);
-	lua_pushinteger(L, pcard->get_mutual_linked_zone());
+	uint32 zone = pcard->get_mutual_linked_zone();
+	int32 cp = pcard->current.controler;
+	if(lua_gettop(L) >= 2 && !lua_isnil(L, 2))
+		cp = lua_tointeger(L, 2);
+	if(cp == 1 - pcard->current.controler)
+		lua_pushinteger(L, (((zone & 0xffff) << 16) | (zone >> 16)));
+	else
+		lua_pushinteger(L, zone);
 	return 1;
 }
 int32 scriptlib::card_is_link_state(lua_State *L) {
@@ -382,11 +396,18 @@ int32 scriptlib::card_get_column_zone(lua_State *L) {
 	int32 loc = lua_tointeger(L, 2);
 	int32 left = 0;
 	int32 right = 0;
+	int32 cp = pcard->current.controler;	
 	if(lua_gettop(L) >= 3)
 		left = lua_tointeger(L, 3);
 	if(lua_gettop(L) >= 4)
 		right = lua_tointeger(L, 4);
-	lua_pushinteger(L, pcard->get_column_zone(loc, left, right));
+	if(lua_gettop(L) >= 5 && !lua_isnil(L, 5))
+		cp = lua_tointeger(L, 5);
+	uint32 zone = pcard->get_column_zone(loc, left, right);
+	if(cp == 1 - pcard->current.controler)
+		lua_pushinteger(L, (((zone & 0xffff) << 16) | (zone >> 16)));
+	else
+		lua_pushinteger(L, zone);
 	return 1;
 }
 int32 scriptlib::card_is_all_column(lua_State *L) {
@@ -777,6 +798,39 @@ int32 scriptlib::card_is_link_type(lua_State *L) {
 	card* pcard = *(card**) lua_touserdata(L, 1);
 	uint32 ttype = lua_tointeger(L, 2);
 	if(pcard->get_link_type() & ttype)
+		lua_pushboolean(L, 1);
+	else
+		lua_pushboolean(L, 0);
+	return 1;
+}
+int32 scriptlib::card_is_level(lua_State *L) {
+	check_param_count(L, 2);
+	check_param(L, PARAM_TYPE_CARD, 1);
+	card* pcard = *(card**) lua_touserdata(L, 1);
+	uint32 tlevel = lua_tointeger(L, 2);
+	if(pcard->get_level() == tlevel)
+		lua_pushboolean(L, 1);
+	else
+		lua_pushboolean(L, 0);
+	return 1;
+}
+int32 scriptlib::card_is_rank(lua_State *L) {
+	check_param_count(L, 2);
+	check_param(L, PARAM_TYPE_CARD, 1);
+	card* pcard = *(card**) lua_touserdata(L, 1);
+	uint32 trank = lua_tointeger(L, 2);
+	if(pcard->get_rank() == trank)
+		lua_pushboolean(L, 1);
+	else
+		lua_pushboolean(L, 0);
+	return 1;
+}
+int32 scriptlib::card_is_link(lua_State *L) {
+	check_param_count(L, 2);
+	check_param(L, PARAM_TYPE_CARD, 1);
+	card* pcard = *(card**) lua_touserdata(L, 1);
+	uint32 tlink = lua_tointeger(L, 2);
+	if(pcard->get_link() == tlink)
 		lua_pushboolean(L, 1);
 	else
 		lua_pushboolean(L, 0);
@@ -1216,6 +1270,73 @@ int32 scriptlib::card_check_activate_effect(lua_State *L) {
 	}
 	return 0;
 }
+int32 scriptlib::card_get_tuner_limit(lua_State *L) {
+	check_param_count(L, 1);
+	check_param(L, PARAM_TYPE_CARD, 1);
+	card* pcard = *(card**)lua_touserdata(L, 1);
+	effect* peffect = pcard->is_affected_by_effect(EFFECT_TUNER_MATERIAL_LIMIT);
+	if(peffect) {
+		interpreter::effect2value(L, peffect);
+		if(peffect->target)
+			interpreter::function2value(L, peffect->target);
+		else
+			lua_pushnil(L);
+		if(peffect->value)
+			lua_pushinteger(L, peffect->value);
+		else
+			lua_pushnil(L);
+		uint16 min = 0;
+		uint16 max = 99;
+		if(peffect->s_range && peffect->s_range > min)
+			min = peffect->s_range;
+		if(peffect->o_range && peffect->o_range < max)
+			max = peffect->o_range;
+		lua_pushinteger(L, min);
+		lua_pushinteger(L, max);
+		return 5;
+	}
+	return 0;
+}
+int32 scriptlib::card_get_hand_synchro(lua_State *L) {
+	check_param_count(L, 1);
+	check_param(L, PARAM_TYPE_CARD, 1);
+	card* pcard = *(card**)lua_touserdata(L, 1);
+	effect* peffect = pcard->is_affected_by_effect(EFFECT_HAND_SYNCHRO);
+	if(peffect) {
+		interpreter::effect2value(L, peffect);
+		if(peffect->target)
+			interpreter::function2value(L, peffect->target);
+		else
+			lua_pushnil(L);
+		uint16 min = 0;
+		uint16 max = 99;
+		if(peffect->s_range && peffect->s_range > min)
+			min = peffect->s_range;
+		if(peffect->o_range && peffect->o_range < max)
+			max = peffect->o_range;
+		lua_pushinteger(L, min);
+		lua_pushinteger(L, max);
+		return 4;
+	}
+	peffect = pcard->is_affected_by_effect(EFFECT_TUNER_MATERIAL_LIMIT);
+	if(peffect && (peffect->value & LOCATION_HAND)) {
+		interpreter::effect2value(L, peffect);
+		if(peffect->target)
+			interpreter::function2value(L, peffect->target);
+		else
+			lua_pushnil(L);
+		uint16 min = 0;
+		uint16 max = 99;
+		if(peffect->s_range && peffect->s_range > min)
+			min = peffect->s_range;
+		if(peffect->o_range && peffect->o_range < max)
+			max = peffect->o_range;
+		lua_pushinteger(L, min);
+		lua_pushinteger(L, max);
+		return 4;
+	}
+	return 0;
+}
 int32 scriptlib::card_register_effect(lua_State *L) {
 	check_param_count(L, 2);
 	check_param(L, PARAM_TYPE_CARD, 1);
@@ -1230,9 +1351,6 @@ int32 scriptlib::card_register_effect(lua_State *L) {
 		pduel->game_field->core.reseted_effects.insert(peffect);
 		return 0;
 	}
-	if((peffect->type & 0x7f0)
-		|| (pduel->game_field->core.reason_effect && (pduel->game_field->core.reason_effect->status & EFFECT_STATUS_ACTIVATED)))
-		peffect->status |= EFFECT_STATUS_ACTIVATED;
 	int32 id;
 	if (peffect->handler)
 		id = -1;
