@@ -667,12 +667,6 @@ bool Game::Initialize() {
 #ifdef YGOPRO_USE_IRRKLANG
 	engineSound = irrklang::createIrrKlangDevice();
 	engineMusic = irrklang::createIrrKlangDevice();
-#ifdef YGOPRO_USE_IKPMP3
-	if(engineMusic) {
-		irrklang::ikpMP3Init(engineSound);
-		irrklang::ikpMP3Init(engineMusic);
-	}
-#endif
 	if(!engineSound || !engineMusic) {
 		chkEnableSound->setChecked(false);
 		chkEnableSound->setEnabled(false);
@@ -680,6 +674,12 @@ bool Game::Initialize() {
 		chkEnableMusic->setEnabled(false);
 		chkMusicMode->setEnabled(false);
 	}
+#ifdef YGOPRO_USE_IKPMP3
+	else {
+		irrklang::ikpMP3Init(engineSound);
+		irrklang::ikpMP3Init(engineMusic);
+	}
+#endif
 #endif
 	hideChat = false;
 	hideChatTimer = 0;
@@ -1480,9 +1480,18 @@ void Game::ShowCardInfo(int code) {
 			wcscat(formatBuffer, scaleBuffer);
 		}
 		stDataInfo->setText(formatBuffer);
-		stSetName->setRelativePosition(rect<s32>(15, 83, 296, 106));
-		stText->setRelativePosition(rect<s32>(15, 83 + offset, 287, 324));
-		scrCardText->setRelativePosition(rect<s32>(267, 83 + offset, 287, 324));
+		//modded
+		if ((cd.type & TYPE_LINK) && (cd.level == 8)) {
+			stDataInfo->setRelativePosition(rect<s32>(15, 60, 296, 98));
+			stSetName->setRelativePosition(rect<s32>(15, 98, 296, 121));
+			stText->setRelativePosition(rect<s32>(15, 98 + offset, 287, 324));
+			scrCardText->setRelativePosition(rect<s32>(267, 98 + offset, 287, 324));
+		} else {
+			stDataInfo->setRelativePosition(rect<s32>(15, 60, 296, 83));		
+			stSetName->setRelativePosition(rect<s32>(15, 83, 296, 106));
+			stText->setRelativePosition(rect<s32>(15, 83 + offset, 287, 324));
+			scrCardText->setRelativePosition(rect<s32>(267, 83 + offset, 287, 324));
+		}
 	} else {
 		myswprintf(formatBuffer, L"[%ls]", dataManager.FormatType(cd.type));
 		stInfo->setText(formatBuffer);
