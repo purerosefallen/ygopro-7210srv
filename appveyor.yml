@@ -62,7 +62,7 @@ build:
 after_build:
   - mv -f bin/release/ygopro.exe .
 
-  - 7z a -mx9 -xr!.git* YGOPro-build-env.7z ygopro.exe event freetype irrlicht lua sqlite3 ikpmp3 irrklang premake
+  - 7z a -mx9 -xr!.git* YGOPro-build-env.7z ygopro.exe event freetype irrlicht lua sqlite3 ikpmp3 irrklang premake5.exe
 
 test: off
 
