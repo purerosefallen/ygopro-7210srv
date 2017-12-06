@@ -38,7 +38,7 @@ build:
 after_build:
   - ps: move bin\release\ygopro.exe .
  
-  - 7z a -mx9 -xr!.git* ygopro-server-env.7z ygopro.exe premake gframe/dirent.h event lua sqlite3
+  - 7z a -mx9 -xr!.git* ygopro-server-env.7z ygopro.exe premake5.exe gframe/dirent.h event lua sqlite3
 
 test: off
 
