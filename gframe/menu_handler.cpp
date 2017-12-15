@@ -6,6 +6,7 @@
 #include "replay_mode.h"
 #include "single_mode.h"
 #include "image_manager.h"
+#include "sound_manager.h"
 #include "game.h"
 
 namespace ygo {
@@ -33,9 +34,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		switch(event.GUIEvent.EventType) {
 		case irr::gui::EGET_BUTTON_CLICKED: {
 			if(id < 110)
-				mainGame->PlaySoundEffect(SOUND_MENU);
+				soundManager.PlaySoundEffect(SOUND_MENU);
 			else
-				mainGame->PlaySoundEffect(SOUND_BUTTON);
+				soundManager.PlaySoundEffect(SOUND_BUTTON);
 			switch(id) {
 			case BUTTON_MODE_EXIT: {
 				mainGame->device->closeDevice();
@@ -256,11 +257,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				ZeroMemory(&si, sizeof(si));
 				si.cb = sizeof(si);
 				ZeroMemory(&pi, sizeof(pi));
-				LPTSTR cmd = new TCHAR[MAX_PATH];
+				wchar_t* cmd = new wchar_t[MAX_PATH];
 				int flag = 0;
 				flag += (mainGame->chkBotHand->isChecked() ? 0x1 : 0);
 				myswprintf(cmd, L"Bot.exe \"%ls\" %d %d", mainGame->botInfo[sel].command, flag, mainGame->gameConf.serverport);
-				if(!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+				if(!CreateProcessW(NULL, (LPWSTR)cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
 				{
 					NetServer::StopServer();
 					break;
