@@ -1,1 +1,1 @@
-# ygopro-koishibuild
+# ygopro 20ex for 777DIY serveer

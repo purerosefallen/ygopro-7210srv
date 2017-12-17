@@ -105,7 +105,10 @@ after_build:
   - cp -rf ygopro-777DIY-master/lflist.conf .
 
   - 7z a -mx9 -xr!.git* ygopro-777DIY-data.7z ygopro_20ex.exe lflist.conf expansions
-  - 7z a -mx9 -xr!.git* ygopro-777DIY-full.7z ygopro_20ex.exe LICENSE README.md lflist.conf strings.conf system.conf cards.cdb script textures deck single pics replay sound expansions WindBot Bot.exe bot.conf
+  - cp -rf ygopro-777DIY-data.7z ygopro-777DIY-full.7z
+  - 7z a -mx9 -xr!.git* ygopro-777DIY-full.7z LICENSE README.md strings.conf system.conf cards.cdb script textures deck single pics replay WindBot Bot.exe bot.conf
+  - cp -rf ygopro-777DIY-data.7z ygopro-777DIY-full-with-sound.7z
+  -  7z a -mx9 -xr!.git* ygopro-777DIY-full-with-sound.7z sound
 
 test: off
 
@@ -124,6 +127,8 @@ artifacts:
     name: data of 777DIY
   - path: ygopro-777DIY-full.7z
     name: ygopro full repack of 777DIY
+  - path: ygopro-777DIY-full-with-sound.7z
+    name: ygopro full repack of 777DIY with sound
 
 cache:
   - premake-5.0.0-alpha12-windows.zip
