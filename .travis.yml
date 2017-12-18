@@ -16,6 +16,8 @@ addons:
     - libirrlicht-dev
     - libgl1-mesa-dev
     - libglu-dev
+env:
+- USE_IRRKLANG=1
 before_install:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     brew update > /dev/null;
@@ -25,12 +27,11 @@ before_install:
 - curl --location --retry 5 http://www.lua.org/ftp/lua-5.3.4.tar.gz | tar zfx -
 - cd lua-5.3.4
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-    make macosx test;
+    sudo make macosx test install > /dev/null;
   fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-    make linux test;
+    sudo make linux test install > /dev/null;
   fi
-- sudo make install
 - cd ..
 
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
@@ -50,6 +51,17 @@ before_install:
     sudo cp -rf build/Release/libIrrlicht.a /usr/local/lib/;
     sudo cp -rf ../../../include /usr/local/include/irrlicht;
     cd ../../../../;
+  fi
+- curl --retry 5 --connect-timeout 30 --location --remote-header-name --remote-name http://www.ambiera.at/downloads/irrKlang-64bit-1.5.0.zip
+- unzip -q irrKlang-64bit-1.5.0.zip
+- mv -f irrKlang-64bit-1.5.0 irrklang
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+    mv -f irrklang/bin/macosx-gcc/libirrklang.dylib irrklang/bin/macosx-gcc/libirrKlang.dylib;
+    sudo cp -rf irrklang/bin/macosx-gcc/*.dylib /usr/local/lib/;
+  fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    mv -f irrklang/bin/linux-gcc-64/libIrrKlang.so irrklang/bin/linux-gcc-64/libirrKlang.so;
+    cp -rf irrklang/bin/linux-gcc-64/*.so .;
   fi
 
 script:
@@ -77,11 +89,11 @@ script:
     fi
   fi
 
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    zip -q -r ygopro-koishi-$TRAVIS_OS_NAME.zip ygopro *.so;
+  fi
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     zip -q -r ygopro-koishi-$TRAVIS_OS_NAME.zip ygopro.app;
-  fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-    zip -q -r ygopro-koishi-$TRAVIS_OS_NAME.zip ygopro;
   fi
 
 deploy:

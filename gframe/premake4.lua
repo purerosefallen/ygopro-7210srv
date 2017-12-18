@@ -1,4 +1,4 @@
-include "lzma"
+include "lzma/."
 
 project "ygopro"
     kind "WindowedApp"
@@ -33,3 +33,8 @@ project "ygopro"
         includedirs { "/usr/include/lua", "/usr/include/lua5.3", "/usr/include/lua/5.3", "/usr/include/irrlicht", "/usr/include/freetype2" }
         excludes { "COSOperator.*" }
         links { "event_pthreads", "GL", "dl", "pthread" }
+    configuration "linux"
+        if USE_IRRKLANG then
+            linkoptions{ "-Wl,-rpath=./" }
+            libdirs { "../irrklang/bin/linux-gcc-64" }
+        end
