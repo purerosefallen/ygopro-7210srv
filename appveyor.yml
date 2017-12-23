@@ -3,6 +3,11 @@ version: '{build}'
 environment:
   irrklang_pro:
     secure: IHiumvV9+f+4JOGb9Al3Husl+Hox2gCq90R74mJQy+g=
+	
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
   - git submodule update --init --recursive
