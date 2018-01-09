@@ -786,7 +786,7 @@ int SingleDuel::Analyze(char* msgbuffer, unsigned int len) {
 			RefreshSzone(1);
 			RefreshHand(0);
 			RefreshHand(1);
-			WaitforResponse(player);
+			WaitforResponse(player, 10);
 			NetServer::SendBufferToPlayer(players[player], STOC_GAME_MSG, offset, pbuf - offset);
 			return 1;
 		}
@@ -810,7 +810,7 @@ int SingleDuel::Analyze(char* msgbuffer, unsigned int len) {
 			RefreshSzone(1);
 			RefreshHand(0);
 			RefreshHand(1);
-			WaitforResponse(player);
+			WaitforResponse(player, 10);
 			NetServer::SendBufferToPlayer(players[player], STOC_GAME_MSG, offset, pbuf - offset);
 			return 1;
 		}
@@ -859,7 +859,7 @@ int SingleDuel::Analyze(char* msgbuffer, unsigned int len) {
 			player = BufferIO::ReadInt8(pbuf);
 			count = BufferIO::ReadInt8(pbuf);
 			pbuf += 10 + count * 13;
-			WaitforResponse(player);
+			WaitforResponse(player, 5);
 			NetServer::SendBufferToPlayer(players[player], STOC_GAME_MSG, offset, pbuf - offset);
 			return 1;
 		}
@@ -1718,15 +1718,17 @@ void SingleDuel::EndDuel() {
 	end_duel(pduel);
 	pduel = 0;
 }
-void SingleDuel::WaitforResponse(int playerid) {
+void SingleDuel::WaitforResponse(int playerid, int add_time) {
 	last_response = playerid;
 	unsigned char msg = MSG_WAITING;
 	NetServer::SendPacketToPlayer(players[1 - playerid], STOC_GAME_MSG, msg);
 	if(host_info.time_limit) {
-		int extra_time = time_limit[playerid] + 10;
-		if(extra_time > host_info.time_limit)
-			extra_time = host_info.time_limit;
-		time_limit[playerid] = extra_time;
+		if(add_time) {
+			int extra_time = time_limit[playerid] + add_time;
+			if(extra_time > host_info.time_limit)
+				extra_time = host_info.time_limit;
+			time_limit[playerid] = extra_time;
+		}
 		STOC_TimeLimit sctl;
 		sctl.player = playerid;
 		sctl.left_time = time_limit[playerid];
