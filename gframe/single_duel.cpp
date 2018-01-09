@@ -1723,6 +1723,10 @@ void SingleDuel::WaitforResponse(int playerid) {
 	unsigned char msg = MSG_WAITING;
 	NetServer::SendPacketToPlayer(players[1 - playerid], STOC_GAME_MSG, msg);
 	if(host_info.time_limit) {
+		int extra_time = time_limit[playerid] + 10;
+		if(extra_time > host_info.time_limit)
+			extra_time = host_info.time_limit;
+		time_limit[playerid] = extra_time;
 		STOC_TimeLimit sctl;
 		sctl.player = playerid;
 		sctl.left_time = time_limit[playerid];
