@@ -16,6 +16,11 @@ public:
 	static int32 check_param(lua_State* L, int32 param_type, int32 index, BOOL retfalse = FALSE);
 	static int32 check_param_count(lua_State* L, int32 count);
 	static int32 check_action_permission(lua_State* L);
+	//2pick
+	static int32 duel_save_pick_deck(lua_State *L);
+	static int32 duel_is_player_need_to_pick_deck(lua_State *L);
+	static int32 duel_get_start_count(lua_State *L);
+	static int32 duel_reset_time_limit(lua_State *L);
 	//millux
 	static int32 card_is_ritual_type(lua_State *L);
 	//modded
@@ -32,6 +37,7 @@ public:
 	static int32 duel_exile(lua_State *L);
 	static int32 duel_disable_action_check(lua_State *L);
 	static int32 duel_setmetatable(lua_State *L);
+	static int32 duel_move_turn_count(lua_State *L);
 
 	//card lib
 	static int32 card_get_code(lua_State *L);

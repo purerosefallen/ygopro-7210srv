@@ -1,2 +1,3 @@
-## KoishiPro
-The server for KoishiPro 2Pick Mode.
+## YGOPro 2Pick test
+A ygopro server for testing 2pick mode
+

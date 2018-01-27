@@ -370,6 +370,11 @@ static const struct luaL_Reg grouplib[] = {
 };
 
 static const struct luaL_Reg duellib[] = {
+	//2pick
+	{ "SavePickDeck", scriptlib::duel_save_pick_deck },
+	{ "IsPlayerNeedToPickDeck", scriptlib::duel_is_player_need_to_pick_deck },
+	{ "GetStartCount", scriptlib::duel_get_start_count },
+	{ "ResetTimeLimit", scriptlib::duel_reset_time_limit },
 	//modded
 	{ "SelectField", scriptlib::duel_select_field },
 	{ "GetMasterRule", scriptlib::duel_get_master_rule },
@@ -377,6 +382,7 @@ static const struct luaL_Reg duellib[] = {
 	{ "Exile", scriptlib::duel_exile },
 	{ "DisableActionCheck", scriptlib::duel_disable_action_check },
 	{ "SetMetatable", scriptlib::duel_setmetatable },
+	{ "MoveTurnCount", scriptlib::duel_move_turn_count },	
 
 	{ "EnableGlobalFlag", scriptlib::duel_enable_global_flag },
 	{ "GetLP", scriptlib::duel_get_lp },
@@ -662,6 +668,11 @@ interpreter::interpreter(duel* pd): coroutines(256) {
 	lua_setglobal(lua_state, "HINT_SOUND");
 	lua_pushinteger(lua_state, HINT_MUSIC_OGG);
 	lua_setglobal(lua_state, "HINT_MUSIC_OGG");
+	//detect operating system
+#ifdef _WIN32
+	lua_pushboolean(lua_state, 1);
+	lua_setglobal(lua_state, "_WIN32");
+#endif
 	//load init.lua by MLD
 	load_script((char*) "./expansions/script/init.lua");
 	//2pick rule
