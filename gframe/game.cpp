@@ -67,7 +67,7 @@ bool Game::Initialize() {
 	guiFont = irr::gui::CGUITTFont::createTTFont(env, gameConf.textfont, gameConf.textfontsize);
 	textFont = guiFont;
 	smgr = device->getSceneManager();
-	device->setWindowCaption(L"YGOPro");
+	device->setWindowCaption(L"YGOPro for MyCard");
 	device->setResizable(false);
 #ifdef _WIN32
 	irr::video::SExposedVideoData exposedData = driver->getExposedVideoData();
@@ -86,7 +86,7 @@ bool Game::Initialize() {
 	//main menu
 	wchar_t strbuf[256];
 	//modded
-	myswprintf(strbuf, L"YGOPro Version:%X.0%X.%X", PRO_VERSION >> 12, (PRO_VERSION >> 4) & 0xff, PRO_VERSION & 0xf);
+	myswprintf(strbuf, L"YGOPro for MyCard Version:%X.0%X.%X", PRO_VERSION >> 12, (PRO_VERSION >> 4) & 0xff, PRO_VERSION & 0xf);
 	wMainMenu = env->addWindow(rect<s32>(370, 200, 650, 415), false, strbuf);
 	wMainMenu->getCloseButton()->setVisible(false);
 	btnLanMode = env->addButton(rect<s32>(10, 30, 270, 60), wMainMenu, BUTTON_LAN_MODE, dataManager.GetSysString(1200));
@@ -762,7 +762,7 @@ void Game::MainLoop() {
 			usleep(20000);
 #endif
 		if(cur_time >= 1000) {
-			myswprintf(cap, L"YGOPro FPS: %d", fps);
+			myswprintf(cap, L"YGOPro for MyCard FPS: %d", fps);
 			device->setWindowCaption(cap);
 			fps = 0;
 			cur_time -= 1000;
@@ -1015,7 +1015,7 @@ void Game::RefreshBot() {
 }
 void Game::LoadConfig() {
 	FILE* fp = fopen("system.conf", "r");
-	FILE* fp_user = fopen("system_user.conf", "r");
+	//FILE* fp_user = fopen("system_user.conf", "r");
 	char linebuf[256];
 	char strbuf[32];
 	char valbuf[256];
@@ -1147,6 +1147,7 @@ void Game::LoadConfig() {
 		}
 		fclose(fp);
 	}
+	/*
 	if(fp_user) {
 		while(fgets(linebuf, 256, fp_user)) {
 			sscanf(linebuf, "%s = %s", strbuf, valbuf);
@@ -1239,9 +1240,11 @@ void Game::LoadConfig() {
 		}
 		fclose(fp_user);
 	}
+	*/
 }
 void Game::SaveConfig() {
-	FILE* fp = fopen("system_user.conf", "w");
+	//FILE* fp = fopen("system_user.conf", "w");
+	FILE* fp = fopen("system.conf", "w");
 	fprintf(fp, "#config file\n#nickname & gamename should be less than 20 characters\n");
 	char linebuf[256];
 	fprintf(fp, "use_d3d = %d\n", gameConf.use_d3d ? 1 : 0);
