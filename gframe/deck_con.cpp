@@ -222,6 +222,7 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 				for(int i = 0; i < 32; ++i, filter <<= 1)
 					if(mainGame->chkCategory[i]->isChecked())
 						filter_effect |= filter;
+				mainGame->btnEffectFilter->setPressed(filter_effect > 0);
 				mainGame->HideElement(mainGame->wCategories);
 				InstantSearch();
 				break;
@@ -322,6 +323,7 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 				if (mainGame->btnMark[7]->isPressed())
 					filter_marks |= 0004;
 				mainGame->HideElement(mainGame->wLinkMarks);
+				mainGame->btnMarksFilter->setPressed(filter_marks > 0);
 				InstantSearch();
 				break;
 			}
@@ -784,8 +786,13 @@ void DeckBuilder::FilterCards() {
 		if (element_end == std::wstring::npos) {
 			break;
 		}
-		query_elements.push_back(str.substr(element_start, element_end - element_start));
-		element_start = element_end + 1;
+		size_t length = element_end - element_start;
+		if(length > 0) {
+			query_elements.push_back(str.substr(element_start, length));
+			element_start = element_end + 1;
+		} else {
+			element_start++;
+		}
 	}
 	query_elements.push_back(str.substr(element_start));
 	std::unordered_map<std::wstring, unsigned int> set_code_map;
@@ -948,6 +955,8 @@ void DeckBuilder::ClearFilter() {
 	filter_marks = 0;
 	for(int i = 0; i < 8; i++)
 		mainGame->btnMark[i]->setPressed(false);
+	mainGame->btnEffectFilter->setPressed(false);
+	mainGame->btnMarksFilter->setPressed(false);
 }
 void DeckBuilder::SortList() {
 	auto left = results.begin();
