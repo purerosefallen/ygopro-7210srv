@@ -55,6 +55,7 @@
 /replay
 /single
 /sound/*.wav
+/sound/custom
 /sound/BGM
 /update
 /update*
